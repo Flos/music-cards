@@ -49,7 +49,7 @@ class Reader:
 			'on-startup': self.startup,
 			'on-connect': self.connected_read,
 		}
-		with nfc.ContactlessFrontend('usb') as clf:
+		with nfc.ContactlessFrontend('tty') as clf:
 			tag = clf.connect(rdwr=rdwr_options)
 			if tag.ndef:
 				return(nfc.ndef.TextRecord(tag.ndef.message[0]).text)
@@ -62,7 +62,7 @@ class Reader:
                         'on-startup': self.startup,
                         'on-connect': self.connected_write,
                 }
-                with nfc.ContactlessFrontend('usb') as clf:
+                with nfc.ContactlessFrontend('tty') as clf:
                         tag = clf.connect(rdwr=rdwr_options)
                         if tag.ndef:
                                 return(nfc.ndef.TextRecord(tag.ndef.message[0]).text)
@@ -73,7 +73,7 @@ class Reader:
 		rdwr_options = {
 			'on-release': self.released,
 		}
-		with nfc.ContactlessFrontend('usb') as clf:
+		with nfc.ContactlessFrontend('tty') as clf:
 			tag = clf.connect(rdwr=rdwr_options)
 			if tag.ndef:
 				return(nfc.ndef.TextRecord(tag.ndef.message[0]).text)

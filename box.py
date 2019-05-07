@@ -1,6 +1,7 @@
 from mpd import MPDClient
 from Reader import Reader
 
+import re
 import sys
 import time
 
@@ -19,8 +20,14 @@ def clear_and_play(client, plist):
 	try:
 		client.stop()
 		client.clear()
-		client.add(plist)
-		client.repeat(1)
+		if re.compile("mopidy:").match(plist): #local mopidy playlist 
+			plist=plist.replace("mopidy:", "")
+			client.clear()
+			client.load(plist)
+			client.random(1)
+		else: #file or spotify url
+			client.add(plist)
+			client.repeat(1)
 		client.play()
 	except:
 		print 'Could not play playlist %s' % plist
