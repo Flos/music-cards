@@ -36,6 +36,7 @@ def clear_and_play(client, plist):
 reader = Reader()
 client = None
 before_card = None
+before_volume = None
 while not client:
 	client = connectMPD()
 	if not client:
@@ -47,12 +48,17 @@ while True:
 	try:
 		card = reader.readCard()
 		print "Read card!"
-		
 		client = connectMPD()
-		if card != '' and card != before_card:
+		if card != '' and card != before_volume and re.compile("volume:").match(card): #volume card -> set new volume
+			print "Volume card found."
+			before_volume = card
+			card=card.replace("volume:", "")
+			client.setvol(card)
+		elif card != '' and card != before_card and not re.compile("volume:").match(card): #if card isn't empty and card isn't the same before
+			print "Music card found."
 			clear_and_play(client, card)
 			before_card = card
-		elif card == before_card:
+		elif card == before_card and not re.compile("volume:").match(card): #same card like before
 			print "Same card."
 			if client.status()["state"] != "play":
 				client.play()
