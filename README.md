@@ -3,7 +3,7 @@
 
 # music-cards(nfcpy)
 
-Fork of [https://github.com/frebeg/music-cards](https://github.com/frebeg/music-cards)
+Forked from [https://github.com/senyoltw/music-cards](https://github.com/senyoltw/music-cards)
 
  - play Local Music with nfc tag
  - play Spotify with nfc tag
