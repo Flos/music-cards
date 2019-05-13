@@ -42,14 +42,21 @@ while not client:
 	client = connectMPD()
 	if not client:
 		time.sleep(2)
+	else:
+		client.clear()
+		client.add("file:///home/pi/ready.mp3")
+		client.repeat(0)
+		client.play()
+		time.sleep(2)
 
 print 'Ready: place a card on top of the reader'
 
 while True:
 	try:
 		card = reader.readCard()
-		print "Read card!"
 		client = connectMPD()
+		
+		print "Read card!"
 		if card != '' and card != before_volume and re.compile("volume:").match(card): #volume card -> set new volume
 			print "Volume card found."
 			before_volume = card
