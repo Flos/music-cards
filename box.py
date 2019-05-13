@@ -27,6 +27,7 @@ def clear_and_play(client, plist):
 			client.random(1)
 		else: #file or spotify url
 			client.add(plist)
+			client.random(1)
 			client.repeat(1)
 		client.play()
 	except:
