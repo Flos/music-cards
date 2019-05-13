@@ -27,9 +27,9 @@ def toggle_mute():
 vol_up_pin = 22
 vol_dn_pin = 27
 
-#Max and min volume (cause my speakers are shit)
-min_vol = 35
-max_vol = 100
+#Max and min volume
+min_vol = 60
+max_vol = 96
 
 GPIO.setup(vol_up_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(vol_dn_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)

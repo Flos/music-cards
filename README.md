@@ -66,7 +66,8 @@ I personally use an Android app called NFC Tools ([Play Store](https://play.goog
  4. Paste the URI in the Text Field
 
 It should look like this:
-![NFC Tool (german)](https://i.imgur.com/w6cKr7L.jpg =300x330)
+
+![Imgur](https://i.imgur.com/4cfcuJD.jpg)
 
 
 If you don't have an android -> use senyoltw's (the person i forked this repo from) method.
