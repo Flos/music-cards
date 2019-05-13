@@ -1,5 +1,16 @@
+
+﻿
+
 # music-cards(nfcpy)
-Write playlist,albums,etc... to NFC tags, Read playlist,albums,etc... from NFC tags. And play it.  
+
+Fork of [https://github.com/frebeg/music-cards](https://github.com/frebeg/music-cards)
+
+ - play Local Music with nfc tag
+ - play Spotify with nfc tag
+ - change volume with nfc tag
+ - (optional: change volume with push buttons)
+
+## Summary
 
 ```
 NFC tag set.      -> play music.
@@ -7,19 +18,25 @@ NFC tag released. -> pause music.
 Same NFC tag set. -> play music. From the time of pause.
 Another tag set.  -> clear queue. and play music.
 ```
-
 https://youtu.be/s8S5DVblT0k
 
-need to buy  
-- NFC read/write device(Work with nfcpy)  
-- NFC tags(read/write)
+## What you need to buy
 
-#NFCタグにプレイリストを書き込んで、それで音楽を再生するやつ  
-必要なもの(以下で動作確認済み)  
-- SONY 非接触ICカードリーダー/ライター PaSoRi RC-S380 https://amzn.to/2QJIx1r
-- サンワサプライ NFCタグ https://amzn.to/2E1tzNn
+- Raspberry Pi
+- NFC read/write device (has to work with nfcpy) ([Supported devices](https://nfcpy.readthedocs.io/en/latest/overview.html#supported-devices))
+- NFC tags
+- optional: Push-Buttons + jump wires
 
-# How to install
+#### What I bought
+- PN532 ([Amazon Link](https://www.amazon.de/Module-Reader-Writer-Android-MIFARE/dp/B01E452FV8))
+- NFC NTAG213 ([Amazon Link]( https://www.amazon.de/Tags-Sticker-NTAG213-Circus-144Byte/dp/B00BTKAI7U))
+- Push Buttons ([Amazon Link](https://www.amazon.de/momentanen-Taster-Schalter-Druckknopf-AC250V/dp/B01FDJLRRW/ref=sr_1_7?keywords=pushbutton&qid=1557738106&s=diy&sr=1-7))
+
+## Support your reader
+If you're not using the same reader, u probably have to edit the **Reader.py** script to support it.
+In most cases you just have to modify the lines containing  ```nfc.ContactlessFrontend('tty:S0')```
+
+## How to install
 - install nfcpy  
 ```
 sudo pip install nfcpy
@@ -30,27 +47,44 @@ sudo pip install nfcpy
 sudo pip install python-mpd2
 ```
 
-- install music server(Can be controlled with mpd)    
-ex. https://github.com/mopidy/mopidy  
+- install a music server (must can be controlled with mpd)    
+**highly recommended:** [Mopidy](https://docs.mopidy.com/en/latest/installation/debian/) with the [spotify-extension](https://github.com/mopidy/mopidy-spotify#installation)
 
 - music-cards install
 ```
-git clone https://github.com/senyoltw/music-cards
+git clone https://github.com/frebeg/music-cards
 ```
 
-# How to USE
+## How to use
 
-```
-#ClIでNFCに音楽URLを書き込む. CLI Write [musiclist] to NFC tags.
-cd music-cards/
-sudo python add_card.py  
-#mpc add [musiclist] で再生キューにいれられるものは大丈夫。
-#Working with mpc add [musiclist]. ex. spotify:playlist:37i9dQZF1DWUpdd1oGKt2o
+### How to write NFC tags
+I personally use an Android app called NFC Tools ([Play Store](https://play.google.com/store/apps/details?id=com.wakdev.wdnfc))
 
-#Read NFC tags. and Play. NFCの読み込みと再生確認。
-sudo python box.py
-```
-# Daemonization
+ 1. Open the NFC Tools app and go to the **Write** Tab.
+ 2. Tap on **Add a record** and choose **Text**
+ 3. Find a Spotify URI by clicking "Share" on any song, album, playlist, or profile on Spotify Desktop App, and then clicking "URI"
+ 4. Paste the URI in the Text Field
+
+It should look like this:
+![NFC Tool (german)](https://i.imgur.com/w6cKr7L.jpg =300x330)
+
+
+If you don't have an android -> use senyoltw's (the person i forked this repo from) method.
+He uses the **add_card.py**. Visit [his repo](https://github.com/senyoltw/music-cards) for instructions. The python script **box.py** just reads the string on the nfc tag and will call ``` mpc add [string] ```
+
+#### Additionally
+If you want to use a mopidy local Playlist, write this on your tag:
+``` mopidy:[playlistname] ```
+
+If you want to modify the mopidy-volume:
+``` volume:[number] ``` *0-100*
+
+### How to Push Buttons to change volume
+If you want to use push buttons to change the raspberry volume you have to connect the buttons to the raspberry GPIO and change the code of the **volume_control.py** script. ([Tutorial](https://raspberrypihq.com/use-a-push-button-with-raspberry-pi-gpio/))
+
+## Daemonization
+
+main function:
 ```
 cd music-cards/
 sudo cp musiccards.service /etc/systemd/system/musiccards.service
@@ -58,17 +92,11 @@ sudo systemctl daemon-reload
 sudo systemctl start musiccards.service
 sudo systemctl enable musiccards.service
 ```
-
-NFCの書き込みもWEBで実行したい場合  
-When you want to execute NFC writing on WEB
+volume-control function:
 ```
-sudo pip install flask
 cd music-cards/
-sudo cp musiccardshttp.service /etc/systemd/system/musiccardshttp.service
+sudo cp volume_control.service /etc/systemd/system/volume_control.service
 sudo systemctl daemon-reload
-sudo systemctl start musiccardshttp.service
-sudo systemctl enable musiccardshttp.service
-
-#and acsess http://[your IP]:5000
+sudo systemctl start volume_control.service
+sudo systemctl enable volume_control.service
 ```
-
